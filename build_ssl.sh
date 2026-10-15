@@ -20,7 +20,7 @@ if [ -z "$NDK_ROOT_PREFIX" ]; then
     fi
 fi
 
-ssl_versions=("1.1.1w" "3.1.8")
+ssl_versions=("1.1.1w" "3.5.9")
 architectures=("arm64" "arm" "x86_64" "x86")
 build_types=('' 'no-asm')
 
@@ -74,7 +74,9 @@ get_ssl_ndk_version() {
         echo "21.4.7075529"
         ;;
     3.*)
-        echo "25.2.9519653"
+        # Keep in sync with the NDK version used to build the app itself
+        # (see .github/workflows/build_android.yml in consolinno-hems-app-builder)
+        echo "28.2.13676358"
         ;;
     *)
         echo $1
@@ -144,7 +146,7 @@ configure_ssl() {
     # behavior. The following code is a workaround that patches OpenSSL
     # source code to set the shlib_variant, and then disables the
     # versioning behavior in the relevant Perl script.
-    patch < "$patch_file"
+    patch -p0 < "$patch_file"
 
     echo "Configuring OpenSSL $ssl_version for ABI $arch with NDK $ndk"
     config_params=()
